@@ -1,3 +1,5 @@
+# This file is auto generated from it's template,
+# see citusdata/tools/packaging_automation/templates/docker/latest/docker-compose.tmpl.yml.
 version: "3"
 
 services:
@@ -29,7 +31,8 @@ services:
     volumes:
       - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
       - citus-healthcheck-volume:/healthcheck
-    depends_on: [master]
+    depends_on: 
+      - master
     env_file:
       - postgres.env
     networks:
@@ -45,11 +48,12 @@ services:
       - citus-pgadmin-data:/var/lib/pgadmin
     networks:
       - flyway-network
-  flyaway:
+  migration:
     build:
       context: ./flyway
       dockerfile: Dockerfile
     command: [ "migrate" ]
+    container_name: migration
     depends_on: 
       - manager
       - master
