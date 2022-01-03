@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  master:
+    container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
+    image: "citusdata/citus:10.2.3"
+    ports: ["${COORDINATOR_EXTERNAL_PORT:-5432}:5432"]
+    labels: ["com.citusdata.role=Master"]
+    env_file:
+      - postgres.env
+    networks:
+      - flyway-network
+  worker:
+    image: "citusdata/citus:10.2.3"
+    labels: ["com.citusdata.role=Worker"]
+    depends_on: [manager]
+    env_file:
+      - postgres.env
+    command: "/wait-for-manager.sh"
+    volumes:
+      - citus-healthcheck-volume:/healthcheck
+    deploy:
+      replicas: 2
+    networks:
+      - flyway-network
+  manager:
+    container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
+    image: "citusdata/membership-manager:0.3.0"
+    volumes:
+      - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
+      - citus-healthcheck-volume:/healthcheck
+    depends_on: [master]
+    env_file:
+      - postgres.env
+    networks:
+      - flyway-network
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    env_file:
+      - postgres.env
+    ports:
+      - "5555:80"
+    volumes:
+      - citus-pgadmin-data:/var/lib/pgadmin
+    networks:
+      - flyway-network
+  flyaway:
+    build:
+      context: ./flyway
+      dockerfile: Dockerfile
+    command: [ "migrate" ]
+    depends_on: 
+      - manager
+      - master
+      - worker
+    image: flyway-routing-api
+    env_file:
+      - postgres.env    
+    networks:
+      - flyway-network
+
+networks:
+  flyway-network:
+
+volumes:
+  citus-healthcheck-volume:
+  citus-pgadmin-data:
