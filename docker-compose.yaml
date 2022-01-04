@@ -38,7 +38,7 @@ services:
     networks:
       - flyway-network
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:6.3
     restart: always
     env_file:
       - postgres.env
@@ -52,7 +52,6 @@ services:
     build:
       context: ./flyway
       dockerfile: Dockerfile
-    command: [ "migrate" ]
     container_name: migration
     depends_on: 
       - manager
