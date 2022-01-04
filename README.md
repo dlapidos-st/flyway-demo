@@ -25,3 +25,4 @@ The docker-compose file creates a distributed Postgres cluster (a primary node a
     ```
 - Using your Postgres client of choice, examine the schema and note the changes made by the migration (PGAdmin is available at http://localhost:5555, with credentials stored in `postgres.env`)
 - Without adding any new files execute the migration again, and note it completed successfully without executing any scripts
+- To stop the cluster and remove all database files, execute `docker-compose down -v`, or to stop the cluster without destroying databases, execute `docker-compose stop`
