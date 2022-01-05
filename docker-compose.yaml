@@ -48,20 +48,6 @@ services:
       - citus-pgadmin-data:/var/lib/pgadmin
     networks:
       - flyway-network
-  migration:
-    build:
-      context: ./flyway
-      dockerfile: Dockerfile
-    container_name: migration
-    depends_on: 
-      - manager
-      - master
-      - worker
-    image: flyway-routing-api
-    env_file:
-      - postgres.env    
-    networks:
-      - flyway-network
 
 networks:
   flyway-network:
