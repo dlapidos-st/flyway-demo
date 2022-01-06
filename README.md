@@ -28,10 +28,7 @@ You'll need a Postgres management tool of your choosing. PGAdmin is included in 
     ALTER TABLE routes
         ADD COLUMN IF NOT EXISTS update_date timestamp DEFAULT (now() at time zone 'utc') NOT NULL;
     ```
-- Execute the migration using the following command:
-    ```
-    bash migrate.sh
-    ```
+- Execute the migration
 - Examine the schema and note the changes made by the migration 
 - Without adding any new files execute the migration again, and note it completed successfully without executing any scripts
 - To stop the cluster and remove all database files, execute `docker-compose down -v`, or to stop the cluster without destroying databases, execute `docker-compose stop`
